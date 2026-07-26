@@ -1,21 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { Household } from '@/lib/types'
+import { getPrimaryHousehold } from '@/lib/household'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: households } = await supabase
-    .from('households')
-    .select('*')
-    .order('created_at', { ascending: true })
+  const household = await getPrimaryHousehold()
 
-  const myHouseholds = (households as Household[]) ?? []
-
-  if (myHouseholds.length === 0) {
+  if (!household) {
     return (
       <div className="p-6 max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center mt-12">
@@ -36,7 +31,6 @@ export default async function DashboardPage() {
     )
   }
 
-  const household = myHouseholds[0]
   const now = new Date()
 
   const sections = [
