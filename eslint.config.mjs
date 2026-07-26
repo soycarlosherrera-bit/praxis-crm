@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Independent Next.js project with its own lint/type config.
+    "family-meals-app/**",
   ]),
 ]);
 
